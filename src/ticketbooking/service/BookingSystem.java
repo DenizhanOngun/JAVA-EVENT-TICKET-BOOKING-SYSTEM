@@ -13,14 +13,22 @@ public class BookingSystem {
 	private ArrayList<Booking> bookings;
 	
 	public BookingSystem() {
-		events = null;
-		customers = null;
-		bookings = null;
+		events = new ArrayList<Event>();
+		customers = new ArrayList<Customer>();
+		bookings = new ArrayList<Booking>();
 	}
 	
-	public void reservation() {
-		System.out.println("Make Reservation");
+	public void addEvent(Event event) {
+		this.events.add(event);
+		
 	}
+	public void addCustomer(Customer customer) {
+		this.customers.add(customer);
+	}
+	
+	public void reservation(Booking booking) {
+		this.bookings.add(booking);
+	}	
 	
 	public void cancellation() {
 		System.out.println("Make Cancellation");
