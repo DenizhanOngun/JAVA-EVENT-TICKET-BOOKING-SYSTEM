@@ -1,36 +1,40 @@
 package ticketbooking.model;
 
+import java.time.LocalDateTime;
+
 public class Booking {
 	
 	enum Status {ACTIVE, CANCELLED}
-	
-	private int bookingID;
-	private Customer customer;
+	private int nextID = 1;
+	private final int bookingID;
+	private String customerName;
+	private int customerID;
 	private Event event;
 	private int originalTotalPrice;
 	private int  paidAmount;
 	private Status status;
+	private final LocalDateTime createdAt;
+	private LocalDateTime cancellationAt;
 	
 	
-	public Booking(int bookingID,
-			Customer customer,
+	public Booking(String customerName,
+			int customerID,
 			Event event,
 			int originalTotalPrice,
 			int paidAmount,
 			Status status) {
-		this.bookingID = bookingID;
-		this.customer = customer;
+		this.bookingID = nextID++;
+		this.customerName = customerName;
 		this.event = event;
 		this.originalTotalPrice = originalTotalPrice;
 		this.paidAmount = paidAmount;
 		this.status = status;
+		this.createdAt = LocalDateTime.now();
 	}
 	public int getBookingID() {
 		return bookingID;
 	}
-	public void setBookingID(int bookingID) {
-		this.bookingID = bookingID;
-	}
+	
 	public int getOriginalTotalPrice() {
 		return originalTotalPrice;
 	}
@@ -49,12 +53,14 @@ public class Booking {
 	public void setStatus(Status status) {
 		this.status = status;
 	}
-	public Customer getCustomer() {
-		Customer temp = customer;
-		return temp;
+	public String getCustomerName() {
+		return customerName;
 	}
-	public void setCustomer(Customer customer) {
-		this.customer = customer;
+	public int getCustomerID() {
+		return customerID;
+	}
+	public LocalDateTime getCreatedAt() {
+		return createdAt; // LocalDateTime immutable obje olduğu için böyle returnluyorum.
 	}
 	public Event getEvent() {
 		Event temp = event;
@@ -63,5 +69,6 @@ public class Booking {
 	public void setEvent(Event event) {
 		this.event = event;
 	}
+	
 	
 }
