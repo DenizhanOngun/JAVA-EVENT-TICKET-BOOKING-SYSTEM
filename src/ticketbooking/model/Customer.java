@@ -3,8 +3,7 @@ package ticketbooking.model;
 public class Customer {
 	private int customerID;
 	private String customerName;
-	private int customerBalance;
-	public  static final String customerType = "REGULAR";
+	private double customerBalance;
 	public Customer(int customerID,
 					String customerName,
 					int customerBalance) {
@@ -27,16 +26,22 @@ public class Customer {
 		return customerName;
 	}
 	
-	public int getCustomerBalance() {
+	public double getCustomerBalance() {
 		return customerBalance;
 	}
 		
-	public void pay(int paidAmount) {
+	public void pay(double paidAmount) {
 		if (paidAmount<= 0)
 			throw new IllegalArgumentException("Amount cannot be"
 					+ " negative number or zero");					
-		
-		customerBalance = customerBalance - paidAmount;
+		else if(this.canAfford(paidAmount))
+			throw new IllegalArgumentException("Insufficent Balance");
+		else
+			customerBalance = customerBalance - paidAmount;
+	}
+	
+	public boolean canAfford(double amount) {
+		return customerBalance >= amount;
 	}
 	
 	public void refund(int refundAmount) {

@@ -9,7 +9,7 @@ public class Event {
 	private String eventName;
 	private Category category;
 	private int capacity;
-	private int ticketPrice;
+	private double ticketPrice;
 	private int MAX_CAPACITY;
 	public Event(int eventID, 
 				 String eventName,
@@ -26,6 +26,13 @@ public class Event {
 		
 	}
 	
+	public boolean canReserveSeats(int amount) {
+		return capacity >= amount;
+	}
+	
+	public boolean canReleaseSeats(int amount) {
+		return MAX_CAPACITY >= capacity + amount;
+	}
 	public void reserveSeats(int amount) {
 		if ( amount <= 0)
 		throw new IllegalArgumentException("Amount cannot be"
@@ -41,5 +48,12 @@ public class Event {
 		if (capacity+amount > MAX_CAPACITY)
 			throw new IllegalArgumentException("Capacity can't be exceed " + MAX_CAPACITY );
 		capacity += amount;
+	}
+	
+	public double getTicketPrice() {
+		return ticketPrice;
+	}
+	public String getEventName() {
+		return eventName;
 	}
 }

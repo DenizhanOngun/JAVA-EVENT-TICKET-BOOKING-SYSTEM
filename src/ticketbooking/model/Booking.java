@@ -9,9 +9,9 @@ public class Booking {
 	private final int bookingID;
 	private String customerName;
 	private int customerID;
-	private Event event;
-	private int originalTotalPrice;
-	private int  paidAmount;
+	private String eventName;
+	private double originalTotalPrice;
+	private double  paidAmount;
 	private Status status;
 	private final LocalDateTime createdAt;
 	private LocalDateTime cancellationAt;
@@ -19,29 +19,28 @@ public class Booking {
 	
 	public Booking(String customerName,
 			int customerID,
-			Event event,
-			int originalTotalPrice,
-			int paidAmount,
-			Status status) {
+			String eventName,
+			double originalTotalPrice,
+			double paidAmount) {
 		this.bookingID = nextID++;
 		this.customerName = customerName;
-		this.event = event;
+		this.eventName = eventName;
 		this.originalTotalPrice = originalTotalPrice;
 		this.paidAmount = paidAmount;
-		this.status = status;
+		this.status = Status.ACTIVE;
 		this.createdAt = LocalDateTime.now();
 	}
 	public int getBookingID() {
 		return bookingID;
 	}
 	
-	public int getOriginalTotalPrice() {
+	public double getOriginalTotalPrice() {
 		return originalTotalPrice;
 	}
 	public void setOriginalTotalPrice(int originalTotalPrice) {
 		this.originalTotalPrice = originalTotalPrice;
 	}
-	public int getPaidAmount() {
+	public double getPaidAmount() {
 		return paidAmount;
 	}
 	public void setPaidAmount(int paidAmount) {
@@ -62,13 +61,21 @@ public class Booking {
 	public LocalDateTime getCreatedAt() {
 		return createdAt; // LocalDateTime immutable obje olduğu için böyle returnluyorum.
 	}
-	public Event getEvent() {
-		Event temp = event;
-		return temp;
+	public String getEventName() {
+		return eventName;
 	}
-	public void setEvent(Event event) {
-		this.event = event;
+
+	
+	
+	public static double calculatePaidAmount(Event event, Customer customer) {
+		double amount = 0;
+		if(customer.getClass() == PremiumCustomer.class) 
+			 amount = event.getTicketPrice()*(1-PremiumCustomer.PREMIUM_DISCOUNT);
+		return amount;
+		
 	}
+	
+
 	
 	
 }
