@@ -30,7 +30,7 @@ public class BookingSystem {
 		this.customers = new ArrayList<Customer>();
 		this.bookings = new ArrayList<Booking>();
 		this.status = PolicyStatus.DISABLED;
-		this.G = 0; // Dön buraya 
+		this.G = 11; // Dön buraya 
 	}
 	
 	
@@ -75,7 +75,10 @@ public class BookingSystem {
 		System.out.println("Getting Booking Policies.");
 	}
 	public boolean canAfforBookingPolicy(int ticketAmount){
-		return ticketAmount <= (2 + (G%3));
+		if (PolicyStatus.ENABLED.equals(status) && !(ticketAmount <= (2 + (G%3))))	
+			throw new IllegalArgumentException("Denied by Booking Limit");
+		else
+		return true;
 		
 	}
 	public boolean isBookingLegal(Customer customer, Event event, int ticketAmount, double paidAmount) {
@@ -84,24 +87,84 @@ public class BookingSystem {
 			this.canAfforBookingPolicy(ticketAmount)
 			  ) return true;
 		
-		else return false;	
+		else
+			return false;	
+	}
+	
+	public boolean isCancellationLegal(int bookingID) {
+		Booking booking = this.findBooking(bookingID);
+		Event event = this.findEvent(booking.getEventID());
+		if (booking.canCancell() && event.canReleaseSeats(booking.getTicketAmount()))
+				return true;
+		else
+			return false;
+	}
+	public Booking findBooking(int bookingID) {
+		for (Booking booking: bookings) {
+			if (booking.getBookingID() == bookingID)
+				return booking;
+		}
+		throw new IllegalArgumentException("Booking Not Found");
+	}
+	
+	public Customer findCustomer(int customerID) {
+		for(Customer customer : customers) {
+			if (customer.getCustomerID() == customerID)
+				return customer;
+		}
+		throw new IllegalArgumentException("Customer Not Found");
 	}
 	
 	
-	public void reservation(Customer customer, Event event, int ticketAmount) {
+	public Event findEvent(int eventID) {
+		for(Event event : events) {
+			if(event.getEventID()==eventID)
+				return event;
+		}
+		throw new IllegalArgumentException("Event Not Found");
+	}
+	
+	
+	public void reservation(int customerID, int eventID, int ticketAmount) {
 		
-		double paidAmount = Booking.calculatePaidAmount(event, customer);
+		
 		try {
-			customer.pay(paidAmount);
-			this.bookings.add(new Booking(customer.getCustomerName(), customer.getCustomerID(), event.getEventName(), event.getTicketPrice(), paidAmount));
+			Customer customer = findCustomer(customerID);
+			Event event = findEvent(eventID);
+			double paidAmount = Booking.calculatePaidAmount(event, customer);
+			if (this.isBookingLegal(customer, event, ticketAmount, paidAmount))
+				customer.pay(paidAmount);
+				event.reserveSeats(ticketAmount);
+				this.bookings.add(new Booking(customer.getCustomerName(), customer.getCustomerID(), event.getEventName(), event.getEventID(), ticketAmount,event.getTicketPrice(), paidAmount));
+				System.out.println("SUCCESS | Paid: " + paidAmount);
 		}
 		catch(IllegalArgumentException e) {
-			
+			System.out.println("FAILED | " + e);
 		}
-		
+		/*
 		if (this.isBookingLegal(customer, event, ticketAmount, paidAmount)) {
 			this.bookings.add(new Booking(customer.getCustomerName(), customer.getCustomerID(), event.getEventName(), event.getTicketPrice(), paidAmount));
 		}
-		
+		*/
+	}
+	
+	public void cancellation(int bookingID) {
+		try {
+			Booking booking = findBooking(bookingID);
+			Customer customer = findCustomer(booking.getCustomerID());
+			Event event = findEvent(booking.getEventID());
+			booking.cancell();
+			double refundAmount = booking.getPaidAmount();
+			event.releaseSeats(booking.getTicketAmount());
+			customer.refund(refundAmount);
+			System.out.println("SUCCESS | Refund: " + refundAmount);
+		}
+		catch(IllegalArgumentException e){
+			System.out.println("FAILED | " + e);
+		}
+	}
+	
+	public void test() {
+		System.out.println(this.findEvent(101).getCapacity());
 	}
 }

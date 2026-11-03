@@ -27,25 +27,27 @@ public class Event {
 	}
 	
 	public boolean canReserveSeats(int amount) {
-		return capacity >= amount;
+		if (!(capacity >=amount))
+			throw new IllegalArgumentException("Insufficent Capacity");
+		else
+			return capacity >= amount;
 	}
+	
 	
 	public boolean canReleaseSeats(int amount) {
 		return MAX_CAPACITY >= capacity + amount;
 	}
 	public void reserveSeats(int amount) {
 		if ( amount <= 0)
-		throw new IllegalArgumentException("Amount cannot be"
-				+ " negative number or zero");
-		if (capacity-amount > 0)
-			throw new IllegalArgumentException("Capacity can't be exceed " + MAX_CAPACITY );
+		throw new IllegalArgumentException("Invalid Quantity");
+		if (!canReserveSeats(amount))
+			throw new IllegalArgumentException(" Insufficient Capacity" );
 		capacity -= amount;
 	}
 	public void releaseSeats(int amount) {
 		if ( amount <= 0)
-		throw new IllegalArgumentException("Amount cannot be"
-				+ " negative number or zero");
-		if (capacity+amount > MAX_CAPACITY)
+			throw new IllegalArgumentException("Invalid Quantity");
+		if (!canReleaseSeats(amount))
 			throw new IllegalArgumentException("Capacity can't be exceed " + MAX_CAPACITY );
 		capacity += amount;
 	}
@@ -55,5 +57,11 @@ public class Event {
 	}
 	public String getEventName() {
 		return eventName;
+	}
+	public int getEventID() {
+		return eventID;
+	}
+	public int getCapacity() {
+		return capacity;
 	}
 }

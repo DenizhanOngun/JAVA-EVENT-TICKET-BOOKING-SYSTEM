@@ -34,17 +34,19 @@ public class Customer {
 		if (paidAmount<= 0)
 			throw new IllegalArgumentException("Amount cannot be"
 					+ " negative number or zero");					
-		else if(this.canAfford(paidAmount))
+		else if(!this.canAfford(paidAmount))
 			throw new IllegalArgumentException("Insufficent Balance");
 		else
 			customerBalance = customerBalance - paidAmount;
 	}
 	
 	public boolean canAfford(double amount) {
+		if (!(customerBalance >= amount))
+			throw  new IllegalArgumentException("Insufficent Balance");
 		return customerBalance >= amount;
 	}
 	
-	public void refund(int refundAmount) {
+	public void refund(double refundAmount) {
 		if (refundAmount<= 0)
 			throw new IllegalArgumentException("Amount cannot be"
 					+ " negative number or zero");

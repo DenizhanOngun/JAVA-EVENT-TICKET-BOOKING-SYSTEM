@@ -9,6 +9,8 @@ public class Booking {
 	private final int bookingID;
 	private String customerName;
 	private int customerID;
+	private int eventID;
+	private int ticketAmount;
 	private String eventName;
 	private double originalTotalPrice;
 	private double  paidAmount;
@@ -20,11 +22,16 @@ public class Booking {
 	public Booking(String customerName,
 			int customerID,
 			String eventName,
+			int eventID,
+			int ticketAmount,
 			double originalTotalPrice,
 			double paidAmount) {
 		this.bookingID = nextID++;
 		this.customerName = customerName;
+		this.customerID = customerID;
 		this.eventName = eventName;
+		this.eventID = eventID;
+		this.ticketAmount = ticketAmount;
 		this.originalTotalPrice = originalTotalPrice;
 		this.paidAmount = paidAmount;
 		this.status = Status.ACTIVE;
@@ -64,13 +71,40 @@ public class Booking {
 	public String getEventName() {
 		return eventName;
 	}
+	
+	public void cancell() {
+		if (Status.CANCELLED.equals(status))
+			throw new IllegalArgumentException("Already Cancelled");
+		else 
+			status = Status.CANCELLED;
+			cancellationAt = LocalDateTime.now();
+	}
+	
+	public boolean canCancell() {
+		if (Status.CANCELLED.equals(status))
+			throw new IllegalArgumentException("Already Cancelled");
+		else 
+			return true;
+	}
 
+	public int getEventID() {
+		return eventID;
+	}
+	
+	
+	public int getTicketAmount() {
+		return ticketAmount;
+	}
+	
+	
 	
 	
 	public static double calculatePaidAmount(Event event, Customer customer) {
 		double amount = 0;
 		if(customer.getClass() == PremiumCustomer.class) 
 			 amount = event.getTicketPrice()*(1-PremiumCustomer.PREMIUM_DISCOUNT);
+		else 
+			amount = event.getTicketPrice();
 		return amount;
 		
 	}
